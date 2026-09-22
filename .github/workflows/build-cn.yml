@@ -30,7 +30,7 @@ jobs:
           New-Item -ItemType Directory -Force artifacts | Out-Null
           $password = ConvertTo-SecureString -String "cnpatch2026" -Force -AsPlainText
           $cert = New-SelfSignedCertificate -Type Custom `
-            -Subject "CN=ThreeFingerDragOnWindows-CN" `
+            -Subject "CN=A5174EBF-789F-4CD5-BF8B-E0CB932DB9AD" `
             -KeyUsage DigitalSignature `
             -KeyExportPolicy Exportable `
             -FriendlyName "ThreeFingerDragOnWindows CN Build" `
