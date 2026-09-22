@@ -45,8 +45,10 @@ jobs:
         run: msbuild ThreeFingerDragOnWindows.sln -t:Restore -p:Configuration=Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64
 
       - name: Build and package
+        id: build
+        shell: pwsh
         run: |
-          msbuild ThreeFingerDragOnWindows.sln -t:Build `
+          $output = & msbuild ThreeFingerDragOnWindows.sln -t:Build `
             -p:Configuration=Release `
             -p:Platform=x64 `
             -p:RuntimeIdentifier=win-x64 `
@@ -55,7 +57,23 @@ jobs:
             -p:GenerateAppxPackageOnBuild=true `
             -p:AppxPackageSigningEnabled=true `
             -p:PackageCertificateKeyFile="$env:GITHUB_WORKSPACE\cert.pfx" `
-            -p:PackageCertificatePassword=cnpatch2026
+            -p:PackageCertificatePassword=cnpatch2026 2>&1
+          $output | ForEach-Object { $_.ToString() } | Set-Content -Path build.log -Encoding utf8
+          $output | ForEach-Object { $_.ToString() }
+          exit $LASTEXITCODE
+
+      - name: Show build errors
+        if: failure()
+        shell: pwsh
+        run: |
+          if (Test-Path build.log) {
+            $lines = Get-Content build.log
+            $err = @($lines | Where-Object { $_ -match '(?i)error|fatal|exception' })
+            if ($err.Count -eq 0) { $err = @($lines | Select-Object -Last 20) }
+            $err | Select-Object -Last 12 | ForEach-Object { Write-Host "::error::$_" }
+          } else {
+            Write-Host "::error::build.log not found"
+          }
 
       - name: List produced packages
         shell: pwsh
