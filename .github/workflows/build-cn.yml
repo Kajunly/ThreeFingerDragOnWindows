@@ -24,10 +24,27 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Create self-signed signing certificate
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          $password = ConvertTo-SecureString -String "cnpatch2026" -Force -AsPlainText
+          $cert = New-SelfSignedCertificate -Type Custom `
+            -Subject "CN=ThreeFingerDragOnWindows-CN" `
+            -KeyUsage DigitalSignature `
+            -KeyExportPolicy Exportable `
+            -FriendlyName "ThreeFingerDragOnWindows CN Build" `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3") `
+            -NotAfter (Get-Date).AddYears(5)
+          Export-PfxCertificate -Cert $cert -FilePath "$env:GITHUB_WORKSPACE\cert.pfx" -Password $password
+          Export-Certificate -Cert $cert -FilePath "$env:GITHUB_WORKSPACE\artifacts\ThreeFingerDragOnWindows-CN.cer" -Type CERT
+          Write-Host "Certificate created: $($cert.Thumbprint)"
+
       - name: Restore NuGet packages
         run: msbuild ThreeFingerDragOnWindows.sln -t:Restore -p:Configuration=Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64
 
-      - name: Build and package (signed with a temporary certificate)
+      - name: Build and package
         run: |
           msbuild ThreeFingerDragOnWindows.sln -t:Build `
             -p:Configuration=Release `
@@ -36,21 +53,9 @@ jobs:
             -p:AppxBundle=Always `
             -p:AppxBundlePlatforms=x64 `
             -p:GenerateAppxPackageOnBuild=true `
-            -p:AppxPackageSigningEnabled=true
-
-      - name: Export the signing certificate (.cer)
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force artifacts | Out-Null
-          $pfx = Get-ChildItem -Path . -Recurse -Filter "*.pfx" | Select-Object -First 1
-          if ($pfx) {
-            Write-Host "Found certificate file: $($pfx.FullName)"
-            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfx.FullName, "")
-            Export-Certificate -Cert $cert -FilePath "artifacts\ThreeFingerDragOnWindows-CN.cer" -Type CERT
-            Write-Host "Exported certificate to artifacts\ThreeFingerDragOnWindows-CN.cer"
-          } else {
-            Write-Host "WARNING: no .pfx certificate file found"
-          }
+            -p:AppxPackageSigningEnabled=true `
+            -p:PackageCertificateKeyFile="$env:GITHUB_WORKSPACE\cert.pfx" `
+            -p:PackageCertificatePassword=cnpatch2026
 
       - name: List produced packages
         shell: pwsh
@@ -58,7 +63,7 @@ jobs:
           Write-Host "=== MSIX packages ==="
           Get-ChildItem -Path . -Recurse -Include *.msix,*.msixbundle | Select-Object -ExpandProperty FullName
           Write-Host "=== Certificates ==="
-          Get-ChildItem -Path . -Recurse -Include *.cer,*.pfx | Select-Object -ExpandProperty FullName
+          Get-ChildItem -Path . -Recurse -Include *.cer | Select-Object -ExpandProperty FullName
 
       - name: Upload package
         uses: actions/upload-artifact@v4
