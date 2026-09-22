@@ -1,0 +1,71 @@
+name: Build Chinese MSIX (x64)
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ "main", "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet packages
+        run: msbuild ThreeFingerDragOnWindows.sln -t:Restore -p:Configuration=Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64
+
+      - name: Build and package (signed with a temporary certificate)
+        run: |
+          msbuild ThreeFingerDragOnWindows.sln -t:Build `
+            -p:Configuration=Release `
+            -p:Platform=x64 `
+            -p:RuntimeIdentifier=win-x64 `
+            -p:AppxBundle=Always `
+            -p:AppxBundlePlatforms=x64 `
+            -p:GenerateAppxPackageOnBuild=true `
+            -p:AppxPackageSigningEnabled=true
+
+      - name: Export the signing certificate (.cer)
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          $pfx = Get-ChildItem -Path . -Recurse -Filter "*.pfx" | Select-Object -First 1
+          if ($pfx) {
+            Write-Host "Found certificate file: $($pfx.FullName)"
+            $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfx.FullName, "")
+            Export-Certificate -Cert $cert -FilePath "artifacts\ThreeFingerDragOnWindows-CN.cer" -Type CERT
+            Write-Host "Exported certificate to artifacts\ThreeFingerDragOnWindows-CN.cer"
+          } else {
+            Write-Host "WARNING: no .pfx certificate file found"
+          }
+
+      - name: List produced packages
+        shell: pwsh
+        run: |
+          Write-Host "=== MSIX packages ==="
+          Get-ChildItem -Path . -Recurse -Include *.msix,*.msixbundle | Select-Object -ExpandProperty FullName
+          Write-Host "=== Certificates ==="
+          Get-ChildItem -Path . -Recurse -Include *.cer,*.pfx | Select-Object -ExpandProperty FullName
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ThreeFingerDragOnWindows-CN-x64
+          path: |
+            **/*.msix
+            **/*.msixbundle
+            **/*.cer
+          if-no-files-found: error

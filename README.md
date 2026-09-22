@@ -1,0 +1,51 @@
+[![Microsoft Store Badge](https://img.shields.io/badge/Microsoft%20Store-005FB8?logo=microsoftstore&logoColor=fff&style=flat)](https://apps.microsoft.com/detail/9MSX91WQCM2V?)
+[![Release](https://img.shields.io/github/v/release/clementgre/ThreeFingerDragOnWindows?label=Download%20version)](https://github.com/clementgre/ThreeFingerDragOnWindows/releases/latest)
+[![TotalDownloads](https://img.shields.io/github/downloads/clementgre/ThreeFingerDragOnWindows/total)](https://github.com/clementgre/ThreeFingerDragOnWindows/releases/latest)
+[![LatestDownloads](https://img.shields.io/github/downloads/clementgre/ThreeFingerDragOnWindows/latest/total)](https://github.com/clementgre/ThreeFingerDragOnWindows/releases/latest)
+
+## Overview
+
+ThreeFingerDragOnWindows aims to bring the macOS-style three-finger dragging functionality to Windows Precision touchpads.
+
+With a simple touchpad gesture, this app allows you to drag windows and select text (by emulating a cursor drag by holding down the left mouse button).
+
+## Preview
+<p align="center">
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingerDragOnWindows/main/ThreeFingerDragOnWindows/Assets/Screenshot-1.png' alt="App screenshot: Touchpad tab" width='700'>
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingerDragOnWindows/main/ThreeFingerDragOnWindows/Assets/Screenshot-2.png' alt="App screenshot: Three Finger Drag tab" width='700'>
+  <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingerDragOnWindows/main/ThreeFingerDragOnWindows/Assets/Screenshot-3.png' alt="App screenshot: Other Settings tab" width='700'>
+</p>
+
+## Installation
+
+If the installation fails, your computer might need to have the Windows App SDK redistributable installed. You can download it from this page: [https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/downloads).
+
+## How to use
+
+Make sure to disable the "Tap twice and drag to multi-select" behaviour and all of the default 3-finger swipe behaviour
+via ``Touchpad settings`` in Windows preferences for the drag to work without interferences.
+
+To open the configuration pane, click the ThreeFingerDragOnWindows tray icon on the Windows taskbar.
+
+## Project Status
+
+The main goal of this project has been achieved, and the app is stable and usable. However, there are still a lot of potential improvements and features that could be added in the future, and a lot of platform-specific issues that could be investigated and fixed.
+I (Clément Grennerat) am not anymore using Windows as my main OS, but I will continue to maintain the project and am open to contributions from the community!
+
+## Build and Execute
+
+The app can be built and run in Microsoft Visual Studio or Jetbrains Rider.
+
+## Libraries used
+
+The app is a WinUI 3 app, that uses the [Microsoft.UI.Xaml](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/) library.
+
+Other libraries used:
+- [emoacht/RawInput.Touchpad](https://github.com/emoacht/RawInput.Touchpad) Allows to get the raw input of the touchpad (included in the source code as TouchpadHelper.cs).
+- [HavenDV/H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) API for Windows taskbar tray icon in a WinUI app.
+- [dahall/TaskScheduler](https://github.com/dahall/TaskScheduler) API for Windows TaskScheduler (used for the skipUAC).
+
+
+<a href="https://apps.microsoft.com/detail/9msx91wqcm2v?mode=direct">
+	<img src="https://get.microsoft.com/images/fr%20dark.svg" width="200"/>
+</a>

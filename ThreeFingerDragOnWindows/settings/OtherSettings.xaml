@@ -1,0 +1,104 @@
+<Page
+    x:Class="ThreeFingerDragOnWindows.settings.OtherSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wuc="using:WinUICommunity"
+    mc:Ignorable="d">
+
+
+    <ScrollView Margin="0"
+                HorizontalAlignment="Stretch"
+                VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20,0,20,20"
+                    ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
+                    Spacing="5">
+
+
+            <wuc:SettingsCard Header="开机自启"
+                              Description="ThreeFingerDragOnWindows 将自动启动。"
+                              HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
+                                                                    Glyph=&#xF83E;}">
+                <ToggleSwitch x:Name="RunAtStartup"
+                              Toggled="RunAtStartup_Toggled" />
+            </wuc:SettingsCard>
+
+            <InfoBar Title=""
+                     x:Name="StartupStatus"
+                     IsClosable="False"
+                     IsOpen="True"
+                     Severity="Informational" />
+
+            <InfoBar
+                Title="应用已设置为以管理员权限运行。任务管理器中的启动项将被禁用，并改为在任务计划程序中注册另一个任务，以便在不弹出 UAC 提示的情况下启动应用。"
+                x:Name="ElevatedStartupInformation"
+                IsClosable="False"
+                IsOpen="True"
+                Severity="Informational" />
+
+
+            <wuc:SettingsCard Header="以管理员身份运行"
+                              Description="如果应用不是以管理员身份运行，当具有管理员权限的窗口处于焦点时，拖拽功能将无法工作。"
+                              HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily},
+                                                                    Glyph=&#xE7EF;}">
+                <ToggleSwitch x:Name="RunElevated" Toggled="RunElevated_Toggled"
+                              IsOn="{x:Bind RunElevatedProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </wuc:SettingsCard>
+            <InfoBar Title=""
+                     x:Name="ElevatedStatus"
+                     IsClosable="False"
+                     IsOpen="True"
+                     Severity="Informational" />
+
+            <wuc:SettingsCard Header="记录日志"
+                              Description="要记录日志，请启用日志记录、复现你遇到的问题、关闭日志记录、保存文件并添加到 GitHub issue 中。日志文件只包含最后 10000 行日志。"
+                              HeaderIcon="{wuc:FontIcon FontFamily={StaticResource SymbolThemeFontFamily}, Glyph=&#xE8E5;}">
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="10">
+                    <ToggleSwitch x:Name="RecordLogs" IsOn="{x:Bind RecordLogsProperty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button x:Name="SaveLogsButton" Content="保存日志文件" Click="SaveLogsButton_Click" />
+                </StackPanel>
+
+            </wuc:SettingsCard>
+
+
+            <wuc:SettingsGroup Header="关于">
+                <wuc:SettingsGroup.Items>
+                    <wuc:SettingsExpander Description="© 2023-2025. All rights reserved."
+                                          Header="ThreeFingerDragOnWindows">
+                        <wuc:SettingsExpander.HeaderIcon>
+                            <BitmapIcon ShowAsMonochrome="False"
+                                        UriSource="ms-appx:///Assets/icon-52.png" />
+                        </wuc:SettingsExpander.HeaderIcon>
+
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   IsTextSelectionEnabled="True"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Text="Version 2.0.7.0" />
+
+                        <wuc:SettingsExpander.Items>
+                            <wuc:SettingsCard HorizontalContentAlignment="Left"
+                                              ContentAlignment="Left">
+                                <StackPanel Margin="-12,0,0,0"
+                                            Orientation="Vertical">
+                                    <HyperlinkButton Content="GitHub 仓库"
+                                                     NavigateUri="https://github.com/ClementGre/ThreeFingerDragOnWindows"
+                                                     Margin="0,0,0,5" />
+                                    <HyperlinkButton Content="通过 Paypal 捐赠"
+                                                     NavigateUri="https://www.paypal.com/paypalme/themsou" />
+                                </StackPanel>
+                            </wuc:SettingsCard>
+                        </wuc:SettingsExpander.Items>
+                    </wuc:SettingsExpander>
+                    <HyperlinkButton Margin="0,8,0,0"
+                                     Content="提交 GitHub issue"
+                                     NavigateUri="https://github.com/ClementGre/ThreeFingerDragOnWindows/issues/new" />
+                </wuc:SettingsGroup.Items>
+            </wuc:SettingsGroup>
+
+
+        </StackPanel>
+    </ScrollView>
+
+</Page>

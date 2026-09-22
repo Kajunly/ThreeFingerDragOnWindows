@@ -1,0 +1,44 @@
+<Page
+    x:Class="ThreeFingerDragOnWindows.settings.TouchpadSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wuc="using:WinUICommunity"
+    mc:Ignorable="d">
+
+
+    <ScrollView Margin="0"
+                HorizontalAlignment="Stretch"
+                VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20,0,20,20"
+                    ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
+                    Spacing="5">
+
+            <StackPanel Orientation="Horizontal" x:Name="Loader">
+                <ProgressRing Width="20"
+                              Height="20"
+                              Margin="18,18"
+                              IsActive="True" />
+                <TextBlock VerticalAlignment="Center"
+                           Style="{ThemeResource BodyTextBlockStyle}"
+                           Text="正在初始化触控板服务..." />
+            </StackPanel>
+
+            <InfoBar Title=""
+                     x:Name="TouchpadStatus"
+                     IsClosable="False"
+                     IsOpen="True"
+                     Severity="Informational" />
+
+            <InfoBar Title="触摸触控板以查看输入。"
+                     x:Name="ContactsDebug"
+                     IsClosable="False"
+                     IsOpen="True"
+                     Severity="Informational" />
+            
+
+        </StackPanel>
+    </ScrollView>
+
+</Page>
