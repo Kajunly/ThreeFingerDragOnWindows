@@ -9,6 +9,12 @@ ThreeFingerDragOnWindows aims to bring the macOS-style three-finger dragging fun
 
 With a simple touchpad gesture, this app allows you to drag windows and select text (by emulating a cursor drag by holding down the left mouse button).
 
+ThreeFingerDragOnWindows 旨在将 macOS 风格的三指拖拽功能带到 Windows Precision 触摸板上。
+
+只需简单的触摸板手势，这款应用就能拖动窗口和选择文本（通过模拟按住左键的光标拖拽）。
+
+
+
 ## Preview
 <p align="center">
   <img src='https://raw.githubusercontent.com/ClementGre/ThreeFingerDragOnWindows/main/ThreeFingerDragOnWindows/Assets/Screenshot-1.png' alt="App screenshot: Touchpad tab" width='700'>
@@ -30,7 +36,7 @@ To open the configuration pane, click the ThreeFingerDragOnWindows tray icon on 
 ## Project Status
 
 The main goal of this project has been achieved, and the app is stable and usable. However, there are still a lot of potential improvements and features that could be added in the future, and a lot of platform-specific issues that could be investigated and fixed.
-I (Cl�ment Grennerat) am not anymore using Windows as my main OS, but I will continue to maintain the project and am open to contributions from the community!
+I (Clément Grennerat) am not anymore using Windows as my main OS, but I will continue to maintain the project and am open to contributions from the community!
 
 ## Build and Execute
 
