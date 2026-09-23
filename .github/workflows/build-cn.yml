@@ -4,9 +4,10 @@ on:
   workflow_dispatch: {}
   push:
     branches: [ "main", "master" ]
+    tags: [ 'v*' ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -75,20 +76,39 @@ jobs:
             Write-Host "::error::build.log not found"
           }
 
-      - name: List produced packages
+      - name: Prepare release files
         shell: pwsh
         run: |
-          Write-Host "=== MSIX packages ==="
-          Get-ChildItem -Path . -Recurse -Include *.msix,*.msixbundle | Select-Object -ExpandProperty FullName
-          Write-Host "=== Certificates ==="
-          Get-ChildItem -Path . -Recurse -Include *.cer | Select-Object -ExpandProperty FullName
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $bundle = Get-ChildItem -Path . -Recurse -Include *.msixbundle,*.msix | Select-Object -First 1
+          if ($bundle) { Copy-Item $bundle.FullName -Destination "dist\" } else { Write-Host "No msix found" }
+          Copy-Item "artifacts\ThreeFingerDragOnWindows-CN.cer" -Destination "dist\" -ErrorAction SilentlyContinue
+          Write-Host "=== dist ==="
+          Get-ChildItem dist | Select-Object Name
 
-      - name: Upload package
+      - name: Upload package (artifact)
         uses: actions/upload-artifact@v4
         with:
           name: ThreeFingerDragOnWindows-CN-x64
-          path: |
-            **/*.msix
-            **/*.msixbundle
-            **/*.cer
+          path: dist/*
           if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          body: |
+            ## ThreeFingerDragOnWindows 中文版（汉化）
+
+            macOS 风格的三指拖拽工具，界面已汉化为简体中文。
+
+            ### 安装步骤
+            1. 卸载商店版（若已安装）：设置 → 应用 → 已安装的应用 → Three Finger Drag → 卸载
+            2. 双击 `ThreeFingerDragOnWindows-CN.cer` → 安装证书 → 本地计算机 → 将证书放入「受信任的人（Trusted People）」
+            3. 双击 `.msixbundle` → 安装
+            4. 若提示需要旁加载：设置 → 隐私和安全性 → 开发者选项 → 打开「开发人员模式」后重新安装
+
+            ### 注意
+            - 中文版与商店版为同一应用身份，不能并存，请先卸载商店版
+            - 证书为每次构建自动生成的自签名证书，仅用于本地旁加载
